@@ -7,7 +7,7 @@ fetch('dummy.json').then(response => {
 
   let csp = document.createTextNode(headers.get('Content-Security-Policy'));
   document.getElementById('content-security-policy').append(csp);
-});
+}).then(proceed);
 
 let here = new URL(document.location);
 let query = here.searchParams.get('query');
@@ -20,3 +20,12 @@ for(let i = 0; i < links.length; i++ ) {
 
 let target = document.getElementById('target');
 target.innerHTML = query;
+
+function proceed () {
+}
+
+function updateLinks () {
+}
+
+function injectQuery () {
+}

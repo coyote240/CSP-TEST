@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cross-site Scripting Protection Test Suite</title>
+    <meta charset="utf-8"/>
+    <link href="https://fonts.googleapis.com/css?family=Tomorrow&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <h1>Cross-site Scripting Protection Test Suite</h1>
+    <ul>
+      <li><b>X-XSS-Protection:&nbsp;</b>
+        <span id="x-xss-value"></span></li>
+      <li><b>Content-Security-Policy:&nbsp;</b>
+        <span id="content-security-policy"></span></li>
+    </ul>
+
+    <p id="noscript">
+    When the Content-Security-Policy is set to default-src 'none', no script
+    origin is acceptable and JavaScript will not run on the page.
+    </p>
+
+    <p>
+    default-src 'self' will allow scripts downloaded from the same origin as the page,
+    but prevent scripts from third-party domains and inline scripts.
+    </p>
+
+    <p>
+    Using default-src 'unsafe-inline' only will prevent scripts other than inline
+    javascript from being downloaded or executed
+    </p>
+
+    <h2>URL Source, HTML sink</h2>
+    <p id="target"></p>
+
+    <h2>Links</h2>
+    <ul id="links">
+      <li><a href="/x-xss-protection-off/">X-XSS-Protection: 0</a></li>
+      <li><a href="/x-xss-protection/">X-XSS-Protection: 1</a></li>
+      <li><a href="/x-xss-protection-block/">X-XSS-Protection: 1; mode=block</a></li>
+      <li><a href="/csp-default-self/">Content-Security-Policy: default-src 'self'</a></li>
+      <li><a href="/csp-default-none/">Content-Security-Policy: default-src 'none'</a></li>
+      <li><a href="/csp-default-unsafe-inline/">Content-Security-Policy: default-src 'unsafe-inline'</a></li>
+      <li><a href="/csp-default-self-unsafe-inline/">Content-Security-Policy: default-src 'self unsafe-inline'</a></li>
+    </ul>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>

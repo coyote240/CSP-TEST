@@ -31,3 +31,9 @@ http://localhost:8080/x-xss-protection-block/?query=%3Cimg%20src=%27null%27%20on
 Each of the links at the bottom of the page will contain your search parameters.
 Each of the links points to a different directory on the server, with XSS
 protection headers configured as displayed.
+
+
+## Features
+
+* Selection of multiple configurations
+* Reporting endpoint
