@@ -1,8 +1,5 @@
 FROM nginx
 
-RUN apt-get update
-RUN apt-get install supervisord
-
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY html /usr/share/nginx/html/
 COPY html /usr/share/nginx/html/x-xss-protection/

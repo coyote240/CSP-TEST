@@ -11,7 +11,6 @@ app = Flask(__name__)
 def get_db():
     if 'db' not in g:
         g.db = sqlite3.connect('reports.db')
-        g.db.row_factory = sqlite3.Row
         init_db(g.db)
     return g.db
 
@@ -52,10 +51,9 @@ def report():
 @app.route('/results', methods=['GET'])
 def results():
     c = get_db().cursor()
-    c.execute('select * from csp_reports')
-    res = c.fetchall()
-    print(res)
-    return json.dumps(res)
+    c.execute('select req_id, policy, violated_directive from csp_reports')
+    rows = c.fetchall()
+    return json.dumps(rows)
 
 
 @app.teardown_appcontext

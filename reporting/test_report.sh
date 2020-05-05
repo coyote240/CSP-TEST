@@ -17,4 +17,4 @@ curl -X POST \
   -d "${REPORT}" \
   -H "Content-Type: application/json" \
   -x http://localhost:8080 \
-  localhost:5000
+  localhost:8000/reporting/

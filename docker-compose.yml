@@ -1,8 +1,10 @@
-version: "3.8"
+version: "3.3"
 services:
   website:
     build: ./website
     image: csp-site:latest
+    ports:
+    - "8000:80"
   reporting:
     build: ./reporting
     image: csp-reporting:latest
