@@ -3,8 +3,7 @@
 import uuid
 import json
 import sqlite3
-from urllib.parse import urlparse
-from flask import Flask, make_response, request, g
+from flask import Flask, request, g
 app = Flask(__name__)
 
 
@@ -27,10 +26,10 @@ def init_db(db):
 
 @app.route('/', methods=['POST'])
 def report():
-    report = request.get_json().get('csp-report', {})
-    doc_uri = report.get('document-uri')
+    raw = request.get_data()
+    decoded = json.loads(raw)
+    report = decoded.get('csp-report', {})
 
-    uri = urlparse(doc_uri)
     reqid = uuid.uuid4().hex
 
     db = get_db()
@@ -43,17 +42,26 @@ def report():
                      json.dumps(report)))
     db.commit()
 
-    resp = make_response()
-    resp.set_cookie('csp-req-id', reqid, path=uri.path)
-    return resp
+    return 'Received.'
 
 
-@app.route('/results', methods=['GET'])
+@app.route('/', methods=['GET'])
 def results():
     c = get_db().cursor()
     c.execute('select req_id, policy, violated_directive from csp_reports')
     rows = c.fetchall()
     return json.dumps(rows)
+
+
+@app.route('/<id>', methods=['DELETE'])
+def delete_report(id=None):
+    if id is not None:
+        db = get_db()
+        c = db.cursor()
+        c.execute('delete from csp_reports where req_id = ?', (id,))
+        db.commit()
+        return 'Deleted!'
+    return 'Not found'
 
 
 @app.teardown_appcontext
