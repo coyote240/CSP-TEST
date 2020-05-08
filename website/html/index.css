@@ -1,0 +1,29 @@
+body {
+  width: 75%;
+  margin: auto;
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 26px;
+}
+
+p {
+  width: 75%;
+}
+
+p.overview {
+  font-size: 1.5rem;
+  font-style: italic;
+  line-height: 2rem;
+}
+
+section.site-without-policy,
+section.x-xss-protection {
+  display: none;
+}
+
+body.site-without-policy section.site-without-policy,
+body.x-xss-protection section.x-xss-protection {
+  display: block;
+}

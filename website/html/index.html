@@ -1,40 +1,119 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Cross-site Scripting Protection Test Suite</title>
+    <title>Understanding Content Security Policy</title>
     <meta charset="utf-8"/>
-    <link href="https://fonts.googleapis.com/css?family=Tomorrow&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="index.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Tomorrow&display=swap" rel="stylesheet"/>
   </head>
   <body>
-    <h1>Cross-site Scripting Protection Test Suite</h1>
-    <ul>
-      <li><b>X-XSS-Protection:&nbsp;</b>
-        <span id="x-xss-value"></span></li>
-      <li><b>Content-Security-Policy:&nbsp;</b>
-        <span id="content-security-policy"></span></li>
-    </ul>
+    <section class="introduction">
+      <h1>Understanding Content Security Policy</h1>
 
-    <p id="noscript">
-    When the Content-Security-Policy is set to default-src 'none', no script
-    origin is acceptable and JavaScript will not run on the page.
-    </p>
+      <p class="overview">
+      The purpose of this site is to demonstrate the effects of various Content
+      Security Policies (CSP) when applied to a single HTML document. This page
+      has been deployed to a number of directories with different CSP configured,
+      accessible via links below. Each policy will affect this page's behavior in
+      specific ways, which we will describe.
+      </p>
+    </section>
 
-    <p>
-    default-src 'self' will allow scripts downloaded from the same origin as the page,
-    but prevent scripts from third-party domains and inline scripts.
-    </p>
+    <section class="x-xss-protection">
+      <h2>X-XSS-Protection</h2>
 
-    <p>
-    Using default-src 'unsafe-inline' only will prevent scripts other than inline
-    javascript from being downloaded or executed
-    </p>
+      <p>
+      This page has been delivered with an X-XSS-Protection header. While this
+      header has been recommended in the past, it is in fact unsupported in all
+      modern browsers. The X-XSS-Protection header had been implemented in
+      Internet Explorer and Safari, but was only briefly supported by Google
+      Chrome and was never implemented by Firefox. Instead, a strong Content
+      Security Policy is recommended, which will be discussed in further detail
+      below.
+      </p>
+
+      <p>
+      In order to demonstrate that the X-XSS-Protection header does not, in
+      fact, prevent XSS, click the link below which exploits an XSS
+      vulnerability built into this page.
+      </p>
+
+      <p>
+        <a href="/x-xss-protection-block/?query=%3Cimg%20src=%27null%27%20onerror=alert('XSS')%3E">Click Me!</a>
+      </p>
+
+      <p>
+      As you can see, X-XSS-Protection may no longer be considered adequate
+      protection for client sites. Instead, let's begin to put together a
+      Content Security Policy that provides adequate protection while meeting
+      the needs of the application.
+      </p>
+
+      <p>
+        <a href="/csp-default-self/">Content-Security-Policy: default-src 'self'</a>
+      </p>
+    </section>
+
+    <section class="site-without-policy">
+      <h2>A Lack of Content Security Policy</h2>
+
+      <p>
+      This page has been delivered without a Content Security Policy (CSP).
+      Without a CSP, JavaScript, CSS, fonts and other objects may be downloaded
+      and run from any source. This leaves a site open to potential Cross-site
+      scripting attacks which could then also include payloads downloaded from
+      report sources.
+      </p>
+
+      <p>
+      Take a moment to open your browser's Developer Tools and note that this
+      site includes fonts and scripts from Google.
+      </p>
+
+      <p>
+      In the past it was common to recommend the use of the X-XSS-Protection
+      header to help mitigate the threat of Cross Site Scripting. Click the
+      link below to view this page as delivered with an X-XSS-Protection
+      header.
+      </p>
+
+      <p>
+        <a href="/x-xss-protection-block/">X-XSS-Protection: 1; mode=block</a>
+      </p>
+    </section>
+
+    <section class="directives">
+      <h2>Directives and Sources</h2>
+
+      <noscript>
+      When the Content-Security-Policy is set to default-src 'none', no script
+      origin is acceptable and JavaScript will not run on the page.
+      </noscript>
+
+      <p>
+      default-src 'self' will allow scripts downloaded from the same origin as the page,
+      but prevent scripts from third-party domains and inline scripts.
+      </p>
+
+      <p>
+      Using default-src 'unsafe-inline' only will prevent scripts other than inline
+      javascript from being downloaded or executed
+      </p>
+    </section>
+
+    <section class="use-cases">
+      <h2>Common Use Cases</h2>
+
+      <h3>Self-hosted, but fonts from Google</h3>
+
+      <h3>Self-hosted, but script from CDN</h3>
+    </section>
 
     <h2>URL Source, HTML sink</h2>
     <p id="target"></p>
 
     <h2>Links</h2>
     <ul id="links">
-      <li><a href="/x-xss-protection-off/">X-XSS-Protection: 0</a></li>
       <li><a href="/x-xss-protection/">X-XSS-Protection: 1</a></li>
       <li><a href="/x-xss-protection-block/">X-XSS-Protection: 1; mode=block</a></li>
       <li><a href="/csp-default-self/">Content-Security-Policy: default-src 'self'</a></li>

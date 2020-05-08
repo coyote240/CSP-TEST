@@ -2,30 +2,39 @@
 fetch('dummy.json').then(response => {
   return response.headers;
 }).then(headers => {
-  let xxss = document.createTextNode(headers.get('X-XSS-Protection'));
-  document.getElementById('x-xss-value').append(xxss);
-
-  let csp = document.createTextNode(headers.get('Content-Security-Policy'));
-  document.getElementById('content-security-policy').append(csp);
+  return {
+    xxss: headers.get('X-XSS-Protection'),
+    csp: headers.get('Content-Security-Policy')
+  };
 }).then(proceed);
 
-let here = new URL(document.location);
-let query = here.searchParams.get('query');
-let links_list = document.getElementById('links');
-let links = links_list.getElementsByTagName('a');
 
-for(let i = 0; i < links.length; i++ ) {
-  links[i].search = here.search;
-};
 
-let target = document.getElementById('target');
-target.innerHTML = query;
+function proceed (headers) {
+  let {xxss, csp} = headers;
+  console.log(headers);
 
-function proceed () {
-}
+  if(xxss) {
+    document.body.classList.add('x-xss-protection');
+  }
 
-function updateLinks () {
+  if(!csp) {
+    document.body.classList.add('site-without-policy');
+  }
+
+  injectQuery();
 }
 
 function injectQuery () {
+  let here = new URL(document.location);
+  let query = here.searchParams.get('query');
+  let links_list = document.getElementById('links');
+  let links = links_list.getElementsByTagName('a');
+
+  let target = document.getElementById('target');
+  target.innerHTML = query;
+
+  for(let i = 0; i < links.length; i++ ) {
+    links[i].search = here.search;
+  };
 }
