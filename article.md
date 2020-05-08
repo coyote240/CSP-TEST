@@ -91,10 +91,55 @@ sites that use custom fonts. This use case requires a couple more directives.
 Content-Security-Policy: default-src 'self'; img-src images.example.com; script-src 'self' https://code.jquery.com; font-src https://fonts.googleapis.com;
 ```
 
-## In the Interest of Safety
+With this policy applied, we now have more strict control over the delivery of
+fonts and scripts from third parties, while limiting other media types to those
+hosted on our web server. For fonts, images and similar static content, these
+simple polices address the majority of our concerns. For scripts, however,
+things get a bit more complex.
 
+### In the Interest of Safety
+
+In addition to specifying URLs, the `script-src` directive gives the developer
+control over scripts being run from `<script>` tags, event attributes and other
+inline locations within an HTML document. This is where protecting against
+reflected XSS becomes especially critical. Code cannot execute from an XSS
+payload if the browser restricts it. By default, the `script-src` directive
+prevents the use of `eval`, `Function()` and the passing of string literal code
+to methods like `window.setTimeout()` and `window.setInterval()`. It also
+restricts the use of the `<script>` tag to the `head` of the document. Right
+away, these limitations shuts down the majority of potential XSS threats.
+
+Occasionally, though, we need to enable careful use of these features, and the
+`script-src` directive allows for this.
+
+```
+Content-Security-Policy: default-src 'self'; script-src 'unsafe-eval'
+'unsafe-inline';
+```
+
+By enabling `unsafe-eval`, we allow use of the `eval` function as described
+above. Similarly, by enabling `unsafe-inline`, we allow the use of inline script
+tags, event handlers and style elements. While there are clear use cases for
+enabling `unsafe-inline`, it is recommended that `unsave-eval` be universally
+avoided.
 
 ## Reporting Violations
 
 
 ## A Process Towards Adoption
+
+### Start with the Basics
+
+default-src 'self', disable 'unsafe-\*'
+
+### If You See Something, Say Something
+
+Report only
+
+### Tighten the Reins
+
+Adjust the policy to reflect usage while starting to remove unsafe code
+
+### Lock It Down!
+
+## Summary
