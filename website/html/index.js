@@ -1,3 +1,14 @@
+let options = {
+  type: ['intervention'],
+  buffered: false
+};
+
+const observer = new ReportingObserver((reports, observer) => {
+  console.log('start receiving reports');
+  console.log(reports);
+}, options);
+observer.observe();
+
 // Throw-away request to get the server's headers.
 fetch('dummy.json').then(response => {
   return response.headers;

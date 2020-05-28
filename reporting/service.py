@@ -28,6 +28,9 @@ def init_db(db):
 def report():
     raw = request.get_data()
     decoded = json.loads(raw)
+
+    print(decoded)
+
     report = decoded.get('csp-report', {})
 
     reqid = uuid.uuid4().hex

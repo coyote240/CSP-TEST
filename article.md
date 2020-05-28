@@ -4,11 +4,11 @@
 
 Cross-site Scripting (XSS) is far from dead, whatever you may have heard, but
 the tools of its destruction have been wrought. While popular client-side web
-frameworks help to provide out-of-the-box input validation and output filtering
-while browser vendors have expanded capabilities that provide developers with
-tight controls with which to control script execution. These tools do not come
-for free, however, and their use is subtle and challenging; there is risk of
-cutting one's self in the process.
+frameworks help to provide out-of-the-box input validation and output filtering,
+browser vendors have expanded capabilities that provide developers with tight
+controls with which to control script execution. These tools do not come for
+free, however, and their use is subtle and challenging; there is risk of cutting
+one's self in the process.
 
 One of the most powerful weapons in the battle against XSS is the Content
 Security Policy (CSP). While the CSP might be everything we need to stop XSS in
@@ -87,6 +87,9 @@ uncommon to have an application download these from a common source, share that
 cached copy across multiple sites in the user's browser. This is also common for
 sites that use custom fonts. This use case requires a couple more directives.
 
+It is important to note that for any content types where we have not defined a
+directive, the `default-src` directive will be applied.
+
 ```
 Content-Security-Policy: default-src 'self'; img-src images.example.com; script-src 'self' https://code.jquery.com; font-src https://fonts.googleapis.com;
 ```
@@ -120,13 +123,57 @@ Content-Security-Policy: default-src 'self'; script-src 'unsafe-eval'
 By enabling `unsafe-eval`, we allow use of the `eval` function as described
 above. Similarly, by enabling `unsafe-inline`, we allow the use of inline script
 tags, event handlers and style elements. While there are clear use cases for
-enabling `unsafe-inline`, it is recommended that `unsave-eval` be universally
+enabling `unsafe-inline`, it is recommended that `unsafe-eval` be universally
 avoided.
 
 ## Reporting Violations
 
+Notification of policy violations are not sent by default. This can be a problem
+for a couple of reasons. First, as establishing an effective Content Security Policy
+is a complex endeavor, it is imporant that we receive timely feedback if we've
+blocked too much. Second, policy violation reports could be an indicator that an
+attacker is looking for or has found a way to reflect an XSS payload into our
+application. In either case, visibility is key.
+
+Enabling reporting will require some additional work on the server side. When
+reporting is enabled, the browser will send a structured JSON payload to a
+specified endpoint containing details of policy violations as they occur. The
+Content Security Policy specification does not define how violation reports are
+received or processed, so how this is done will depend on the needs of your
+organization. This could be as simple as logging the raw JSON to a file, or
+saving the content to a custom database or Prometheus instance.
+
+Reporting may be added to any Content Security Policy by including a
+`report-uri` directive. The `report-uri` directive references an HTTP endpoint,
+which can be a path relative to your domain.
+
+```
+Content-Security-Policy: default-src 'self'; img-src images.example.com; report-uri /csp/;
+```
+
+When a policy is violated, a report is POSTed to the directive endpoint. Note
+that the report may be sent with a MIME type of either `application/json` or
+`application/csp-report` depending on browser version.
+
+Content Security Policy is an evolving standard, and thus the `report-uri`
+directive has been deprecated in favor of the potentially more robust
+`report-to` directive. However, `report-to` has limited support, where
+`report-uri` still seems to be supported by all major browsers at the time of
+this writing. While I was doing my research for this article, I was unable to
+get Chrome to send any violation reports using the `report-to` directive. Should
+you decide to implement reporting, be prepared for this change in the future.
+
+It is possible to deploy a Content Security Policy in report-only mode. In this
+case, no content is blocked, but a report is sent whenever a policy directive is
+violated. This can greatly ease the adoption of Content Security Policy,
+particularly on an established site.
 
 ## A Process Towards Adoption
+
+As we've described above, the Content Security Policy header is a powerful tool
+in the fight against malicious user content and behavior in the browser. This
+power, however, comes with complexity, and a mistake in a policy can easily
+break an existing site.
 
 ### Start with the Basics
 
@@ -143,3 +190,7 @@ Adjust the policy to reflect usage while starting to remove unsafe code
 ### Lock It Down!
 
 ## Summary
+
+## References
+
+* [CSP Violation Report Syntax](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP#Violation_report_syntax)
